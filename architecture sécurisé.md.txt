@@ -1,0 +1,154 @@
+# Projet : Déploiement d'une infrastructure sécurisée sur Microsoft Azure
+
+## Présentation
+
+Dans le cadre de mon apprentissage du cloud et de la cybersécurité, j'ai réalisé ce projet afin de mieux comprendre le fonctionnement d'une infrastructure sécurisée sur Microsoft Azure.
+
+L'objectif était de créer un environnement composé de plusieurs machines virtuelles Linux capables de communiquer entre elles de manière sécurisée. J'ai également voulu mettre en place un reverse proxy , une répartition de charge et différentes mesures de sécurité afin de me rapprocher d'une architecture utilisée en entreprise.
+
+Ce projet m'a permis de découvrir plusieurs services Azure et de mettre en pratique les notions de réseau, d'administration Linux et de sécurisation d'une infrastructure.
+
+---
+
+# Architecture de l'infrastructure
+
+L'infrastructure est composée de quatre machines virtuelles Ubuntu, chacune ayant un rôle précis.
+
+ Machine virtuelle 	 Rôle                                                                
+
+ vpn-server         Permet un accès sécurisé des administrateurs en SSH                 
+ reverse-proxy22    Héberge Nginx qui sert de proxy inverse et de répartiteur de charge 
+ web-client1        Premier serveur web                                                 
+ web-client2        Deuxième serveur web                                                
+
+---
+
+# Architecture réseau
+
+Pour mieux sécuriser l'infrastructure, j'ai choisi de séparer les différents services dans plusieurs réseaux virtuels Azure et sous-réseaux.
+
+* VNET-HUB
+
+  * VPN-SUBNET
+  * REVERSEPROXY-SUBNET
+  * ADMIN-SUBNET
+  *PROXY-SUBNET
+
+* VNET-CLIENT1
+
+  * WEB-SUBNET1
+
+* VNET-CLIENT2
+
+  * WEB-SUBNET2
+
+L'idée était d'éviter que toutes les machines soient sur le même réseau et de mieux contrôler les communications entre elles.
+
+---
+
+# Sécurisation de l'infrastructure
+
+J'ai essayé d'appliquer plusieurs bonnes pratiques de sécurité que j'ai apprises au cours de ce projet :
+
+* authentification SSH avec une paire de clés ;
+* utilisation des Network Security Groups (NSG) d'Azure ;
+* configuration du pare-feu UFW sur les serveurs ;
+* installation de Fail2Ban pour limiter les attaques par force brute ;
+* communication entre les serveurs via leurs adresses IP privées ;
+* limitation des ports ouverts vers Internet ;
+* protection des serveurs web derrière un proxy inverse.
+
+Même si cette infrastructure reste simple, elle m'a permis de mieux comprendre l'importance de la segmentation réseau et du contrôle des accès.
+
+---
+
+# Proxy inverse
+
+Le serveur **reverse-proxy22** utilise Nginx comme point d'entrée de l'infrastructure.
+
+Toutes les requêtes HTTP arrivent d'abord sur ce serveur avant d'être redirigées vers les serveurs web.
+
+```
+Internet
+    │
+    ▼
+Reverse Proxy (Nginx)
+    │
+    ▼
+web-client1 / web-client2
+```
+
+Ainsi, les serveurs web ne sont jamais accessibles directement depuis Internet.
+
+---
+
+# Répartition de charge
+
+J'ai également configuré Nginx pour répartir automatiquement les requêtes entre les deux serveurs web grâce au module **upstream**.
+
+Cela permet de mieux répartir la charge et de continuer à servir les utilisateurs même si un serveur est plus sollicité que l'autre.
+
+---
+
+# Technologies utilisées
+
+* Microsoft Azure
+* Ubuntu Server 24.04 LTS
+* Nginx
+* OpenSSH
+* UFW
+* Fail2Ban
+* Azure Virtual Networks (VNet)
+* Azure Network Security Groups (NSG)
+* peering
+* groupes de ressources
+
+---
+
+# Captures d'écran
+
+Le dossier **screenshots** contient les différentes étapes de la réalisation du projet :
+
+* création du Resource Group ;
+* création du budget Azure ;
+* configuration des réseaux virtuels ;
+* création des sous-réseaux ;
+* configuration des NSG ;
+* déploiement des machines virtuelles ;
+* configuration du serveur VPN ;
+* installation de Fail2Ban ;
+* configuration de Nginx ;
+* mise en place du load balancing ;
+* tests de fonctionnement.
+
+---
+
+# Ce que ce projet m'a appris
+
+Grâce à ce projet, j'ai pu développer des compétences sur :
+
+* l'administration de machines Linux ;
+* le déploiement de ressources sur Microsoft Azure ;
+* la création de réseaux virtuels ;
+* la sécurisation d'une infrastructure ;
+* la configuration d'un proxy inverse avec Nginx ;
+* la mise en place d'un équilibrage de charge ;
+* la gestion des pare-feu.
+
+C'est un projet qui m'a demandé beaucoup de recherches et de tests, mais il m'a permis de mieux comprendre le fonctionnement d'une infrastructure cloud sécurisée.
+
+---
+
+# Améliorations possibles
+
+Si je devais continuer ce projet, j'aimerais ajouter plusieurs fonctionnalités :
+
+* utiliser Azure Bastion pour éviter l'ouverture du port SSH sur Internet ;
+* remplacer le proxy par Azure Application Gateway ;
+* ajouter un Web Application Firewall (WAF) ;
+* mettre en place Azure Monitor pour la supervision ;
+* stocker les secrets avec Azure Key Vault ;
+* automatiser le déploiement avec Terraform ;
+* créer un pipeline CI/CD avec GitHub Actions.
+
+Ces améliorations me permettraient de me rapprocher davantage d'une architecture utilisée dans un environnement professionnel.
