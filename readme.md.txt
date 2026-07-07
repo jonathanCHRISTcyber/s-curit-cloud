@@ -39,4 +39,6 @@ azure-secure-cloud-infrastructure/
     ├── 18-load-balancer.png
     ├── 19-webclient1-working.png
     ├── 20-webclient2-working.png
+    ├── 22-sécurité https
+    ├── 23-page d'erreur 502 et 404
     └── 21-final-architecture.png
